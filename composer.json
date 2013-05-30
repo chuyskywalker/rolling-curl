@@ -1,0 +1,35 @@
+{
+    "name": "chuyskywalker/rolling-curl",
+    "description": "Rolling-Curl: A non-blocking, non-dos multi-curl library for PHP",
+    "type": "library",
+    "keywords": ["multi", "curl", "parallel", "requests", "asynchronous", "http"],
+    "homepage": "https://github.com/chuyskywalker/rolling-curl",
+    "authors": [
+        {
+            "name": "Jeff Minard",
+            "homepage": "http://jrm.cc/",
+            "role": "Developer"
+        },
+        {
+            "name": "Josh Fraser",
+            "email": "joshfraz@gmail.com",
+            "homepage": "http://joshfraser.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Alexander Makarov",
+            "email": "sam@rmcreative.ru",
+            "homepage": "http://rmcreative.ru/",
+            "role": "Developer"
+        },
+        
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*",
+        "lib-curl": "*"
+    },
+    "autoload": {
+        "psr-0": { "RollingCurl": "src/" }
+    }
+}
