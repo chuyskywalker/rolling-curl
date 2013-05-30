@@ -159,6 +159,36 @@ class RollingCurl
     }
 
     /**
+     * Perform PUT request
+     *
+     * @param  string      $url
+     * @param  null        $putData
+     * @param  array       $headers
+     * @param  array       $options
+     *
+     * @return RollingCurl
+     */
+    public function put($url, $putData = null, $headers = null, $options = null)
+    {
+        return $this->request($url, "PUT", $putData, $headers, $options);
+    }
+
+
+    /**
+     * Perform DELETE request
+     *
+     * @param  string      $url
+     * @param  array       $headers
+     * @param  array       $options
+     *
+     * @return RollingCurl
+     */
+    public function delete($url, $headers = null, $options = null)
+    {
+        return $this->request($url, "DELETE", null, $headers, $options);
+    }
+
+    /**
      * Run all queued requests
      *
      * @return void
@@ -258,6 +288,9 @@ class RollingCurl
 
         // set the request URL
         $options[CURLOPT_URL] = $request->getUrl();
+
+        // set the request method
+        $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
 
         // posting data w/ this request?
         if ($request->getPostData()) {
