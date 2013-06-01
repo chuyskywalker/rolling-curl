@@ -71,6 +71,11 @@ class RollingCurl
     private $pendingRequests = array();
 
     /**
+     * @var int
+     */
+    private $pendingRequestsPosition = 0;
+
+    /**
      * @var Request[]
      *
      * Requests currently being processed by curl
@@ -103,6 +108,7 @@ class RollingCurl
     public function add(Request $request)
     {
         $this->pendingRequests[] = $request;
+
         return $this;
     }
 
@@ -464,7 +470,50 @@ class RollingCurl
      */
     public function getNextPendingRequests($limit = 1)
     {
-        return array_splice($this->pendingRequests, 0, $limit);
+        $lastPosition = $this->getEndOfPendingRequestsRange($limit);
+        $ret = $this->getRequestsFromQueue($lastPosition);
+
+        return $ret;
+
+    }
+
+
+    /**
+     * Find the index where we should stop traversing
+     *
+     * @param int $limit
+     *
+     * @return int
+     */
+    private function getEndOfPendingRequestsRange($limit)
+    {
+        $lastPosition = $this->pendingRequestsPosition + $limit;
+
+        if ($lastPosition > count($this->pendingRequests)) {
+            $lastPosition = count($this->pendingRequests);
+        }
+
+        return $lastPosition;
+    }
+
+
+    /**
+     * Pull the nescessary requests from the queue
+     *
+     * @param int $lastPosition
+     *
+     * @return array
+     */
+    private function getRequestsFromQueue($lastPosition)
+    {
+        $ret = array();
+        for ($i = $this->pendingRequestsPosition; $i < $lastPosition; ++$i) {
+            $ret[] = $this->pendingRequests[$i];
+        }
+
+        $this->pendingRequestsPosition = $lastPosition;
+
+        return $ret;
     }
 
     /**
@@ -486,7 +535,31 @@ class RollingCurl
      */
     public function getCompletedRequests()
     {
+        $this->prunePendingRequestQueue();
+
         return $this->completedRequests;
+    }
+
+
+    /**
+     * Removes requests from the queue that have already been processed
+     *
+     * Beceause the request queue does not shrink during processing
+     * (merely traversed), it is sometimes necessary to prune the queue.
+     * This method creates a new array starting at the first un-processed
+     * request, replaces the old queue and resets counters.
+     */
+    private function prunePendingRequestQueue()
+    {
+        $tmp = array();
+
+        $pendingRequestCount = count($this->pendingRequests);
+        for ($i = $this->pendingRequestsPosition; $i < $pendingRequestCount; ++$i) {
+            $tmp[] = $this->pendingRequests[$i];
+        }
+
+        $this->pendingRequests         = $tmp;
+        $this->pendingRequestsPosition = 0;
     }
 
     /**
@@ -526,6 +599,7 @@ class RollingCurl
     public function clearCompleted()
     {
         $this->completedRequests = array();
+        $this->prunePendingRequestQueue();
         gc_collect_cycles();
         return $this;
     }
