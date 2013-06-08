@@ -49,7 +49,7 @@ class Request
      */
     private $responseText;
     /**
-     * @var array
+     * @var object
      */
     private $responseInfo;
     /**
@@ -219,17 +219,17 @@ class Request
     }
 
     /**
-     * @param array $responseInfo
+     * @param object $responseInfo
      * @return \RollingCurl\Request
      */
     public function setResponseInfo($responseInfo)
     {
-        $this->responseInfo = $responseInfo;
+        $this->responseInfo = (object)$responseInfo;
         return $this;
     }
 
     /**
-     * @return array
+     * @return object
      */
     public function getResponseInfo()
     {
