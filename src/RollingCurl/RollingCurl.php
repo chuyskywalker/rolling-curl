@@ -572,7 +572,8 @@ class RollingCurl
     private function getNextPendingRequests($limit = 1)
     {
         $requests = array();
-        while ($limit--) {
+        $countPending = $limit <= 0 ? $this->countPending() : $limit;
+        while ($countPending--) {
             if (!isset($this->pendingRequests[$this->pendingRequestsPosition])) {
                 break;
             }
