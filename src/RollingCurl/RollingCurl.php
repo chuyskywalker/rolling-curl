@@ -605,7 +605,7 @@ class RollingCurl
      */
     public function prunePendingRequestQueue()
     {
-        $this->pendingRequests = $this->getNextPendingRequests(0);
+        $this->pendingRequests = $this->getNextPendingRequests(-1);
         $this->pendingRequestsPosition = 0;
         return $this;
     }
