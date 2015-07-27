@@ -275,8 +275,13 @@ class RollingCurl
                 // if there is a callback, run it
                 if (is_callable($this->callback)) {
                     $callback = $this->callback;
-                    $callback($request, $this);
+                    $return = $callback($request, $this);
                 }
+                if($return == 'stop') {
+                    curl_multi_close($master);
+                    return;
+                }
+            
 
                 // if something was requeued, this will get it running/update our loop check values
                 $status = curl_multi_exec($master, $active);
