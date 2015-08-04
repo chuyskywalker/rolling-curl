@@ -337,7 +337,7 @@ class RollingCurl
         // posting data w/ this request?
         if ($request->getPostData()) {
             $options[CURLOPT_POST]       = 1;
-            $options[CURLOPT_POSTFIELDS] = $request->getPostData();
+            $options[CURLOPT_POSTFIELDS] = http_build_query($request->getPostData());
         }
 
         // if the request has headers, use those, or if there are global headers, use those
