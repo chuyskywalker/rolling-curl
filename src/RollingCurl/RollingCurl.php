@@ -25,6 +25,16 @@ class RollingCurl
 {
 
     /**
+     * @var
+     */
+    const ERROR = 0;
+
+    /**
+     * @var
+     */
+    const SUCCESS = 1;
+
+    /**
      * @var int
      *
      * Max number of simultaneous requests.
@@ -275,7 +285,12 @@ class RollingCurl
                 // if there is a callback, run it
                 if (is_callable($this->callback)) {
                     $callback = $this->callback;
-                    $callback($request, $this);
+                    $returnCode = $callback($request, $this);
+
+                    if ($returnCode == self::SUCCESS) {
+                        curl_multi_close($master);
+                        return;
+                    }
                 }
 
                 // if something was requeued, this will get it running/update our loop check values
