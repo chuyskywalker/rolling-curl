@@ -564,7 +564,7 @@ class RollingCurl
     /**
      * Return the next $limit pending requests (may return an empty array)
      *
-     * If you pass $limit <= 0 you will get all the pending requests back
+     * If you pass $limit < 0 you will get all the pending requests back
      *
      * @param int $limit
      * @return Request[] May be empty
@@ -605,7 +605,7 @@ class RollingCurl
      */
     public function prunePendingRequestQueue()
     {
-        $this->pendingRequests = $this->getNextPendingRequests(0);
+        $this->pendingRequests = $this->getNextPendingRequests(-1);
         $this->pendingRequestsPosition = 0;
         return $this;
     }
