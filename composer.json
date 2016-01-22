@@ -1,5 +1,5 @@
 {
-    "name": "chuyskywalker/rolling-curl",
+    "name": "danielfosbery/rolling-curl",
     "description": "Rolling-Curl: A non-blocking, non-dos multi-curl library for PHP",
     "type": "library",
     "keywords": ["multi", "curl", "parallel", "requests", "asynchronous", "http"],
