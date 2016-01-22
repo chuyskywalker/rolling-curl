@@ -275,7 +275,7 @@ class RollingCurl
                 // if there is a callback, run it
                 if (is_callable($this->callback)) {
                     $callback = $this->callback;
-                    $callback($request, $this);
+                    call_user_func($callback, $request, $this);
                 }
 
                 // if something was requeued, this will get it running/update our loop check values
@@ -305,7 +305,7 @@ class RollingCurl
 
             // Block until *something* happens to avoid burning CPU cycles for naught
             while(0 == curl_multi_select($master, $selectTimeout) && $idleCallback) {
-                $idleCallback($this);
+                call_user_func($idleCallback, $this);
             }
 
             // see if we're done yet or not
@@ -358,8 +358,8 @@ class RollingCurl
     }
 
     /**
-     * Define a callable to handle the response. 
-     * 
+     * Define a callable to handle the response.
+     *
      * It can be an anonymous function:
      *
      *     $rc = new RollingCurl();
@@ -378,7 +378,7 @@ class RollingCurl
      *         // Cannot be private or protected
      *         public function callback($request, $rolling_curl) {
      *             // process
-     *         } 
+     *         }
      *     }
      *
      * The called code should expect two parameters: \RollingCurl\Request $request, \RollingCurl\RollingCurl $rollingCurl
