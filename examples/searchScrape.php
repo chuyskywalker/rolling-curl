@@ -16,7 +16,7 @@ $start = microtime(true);
 echo "Fetching..." . PHP_EOL;
 $rollingCurl
     ->setCallback(function(\RollingCurl\Request $request, \RollingCurl\RollingCurl $rollingCurl) use (&$results) {
-        if (preg_match_all('#<h3 class="r"><a href="([^"]+)">(.*)</a></h3>#iU', $request->getResponseText(), $out)) {
+        if ($request->getResponseInfo()->http_code==200 && preg_match_all('#<h3 class="r"><a href="([^"]+)">(.*)</a></h3>#iU', $request->getResponseText(), $out)) {
             foreach ($out[1] as $idx => $url) {
                 parse_str(parse_url($url, PHP_URL_QUERY), $params);
                 if (isset($params['q'])) {
