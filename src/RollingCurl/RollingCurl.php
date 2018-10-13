@@ -222,13 +222,16 @@ class RollingCurl
             return;
         }
 
+        $requestHandlers = array();
         foreach ($firstBatch as $request) {
             // setup the curl request, queue it up, and put it in the active array
             $ch      = curl_init();
             $options = $this->prepareRequestOptions($request);
             curl_setopt_array($ch, $options);
             curl_multi_add_handle($master, $ch);
-            $this->activeRequests[(int) $ch] = $request;
+            $key = (int) $ch;
+            $this->activeRequests[$key] = $request;
+            $requestHandlers[$key] = $ch;
         }
 
         $active = null;
@@ -259,18 +262,18 @@ class RollingCurl
                 $this->completedRequests[] = $request;
                 $this->completedRequestCount++;
 
-                // start a new request (it's important to do this before removing the old one)
+                // remove the curl handle that just completed
+                curl_multi_remove_handle($master, $transfer['handle']);
+
+                // start a new request
                 if ($nextRequest = $this->getNextPendingRequest()) {
                     // setup the curl request, queue it up, and put it in the active array
-                    $ch      = curl_init();
+                    $ch      = $requestHandlers[$key];
                     $options = $this->prepareRequestOptions($nextRequest);
                     curl_setopt_array($ch, $options);
                     curl_multi_add_handle($master, $ch);
                     $this->activeRequests[(int) $ch] = $nextRequest;
                 }
-
-                // remove the curl handle that just completed
-                curl_multi_remove_handle($master, $transfer['handle']);
 
                 // if there is a callback, run it
                 if (is_callable($this->callback)) {
